@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Rich Text Editor</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    padding:10px;
+}
+
+.toolbar{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+button{
+    padding:8px 14px;
+    border:none;
+    border-radius:6px;
+    background:#f2f2f2;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#ddd;
+}
+
+button.active{
+    background:#222;
+    color:white;
+}
+
+.editor{
+    min-height:280px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:12px;
+    outline:none;
+}
+
+.editor:empty:before{
+    content:"Start typing here...";
+    color:#999;
+}
+
+.status{
+    margin-top:10px;
+    color:green;
+    font-size:14px;
+    display:none;
+}
+
+.status.show{
+    display:block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="toolbar">
+
+    <button
+        id="boldBtn"
+        onclick="applyFormat('bold')">
+        B
+    </button>
+
+    <button
+        id="italicBtn"
+        onclick="applyFormat('italic')">
+        I
+    </button>
+
+    <button
+        id="strikeBtn"
+        onclick="applyFormat('strikeThrough')">
+        S
+    </button>
+
+</div>
+
+<div
+    id="editor"
+    class="editor"
+    contenteditable="true">
+</div>
+
+<div id="syncStatus" class="status">
+    🟢 Synced
+</div>
+
+<script>
+
+const editor = document.getElementById("editor");
+const syncStatus = document.getElementById("syncStatus");
+
+let isRemoteUpdate = false;
+
+function showSyncIndicator(){
+
+    syncStatus.classList.add("show");
+
+    setTimeout(()=>{
+        syncStatus.classList.remove("show");
+    },500);
+}
+
+function sendUpdate(action){
+
+    if(isRemoteUpdate) return;
+
+    window.parent.postMessage(
+    {
+        type:"FORMAT_SYNC",
+        action,
+        html:editor.innerHTML
+    },
+    "*"
+    );
+}
+
+function applyFormat(action){
+
+    document.execCommand(action);
+
+    updateToolbarState();
+
+    sendUpdate(action);
+}
+
+function updateToolbarState(){
+
+    document
+        .getElementById("boldBtn")
+        .classList.toggle(
+            "active",
+            document.queryCommandState("bold")
+        );
+
+    document
+        .getElementById("italicBtn")
+        .classList.toggle(
+            "active",
+            document.queryCommandState("italic")
+        );
+
+    document
+        .getElementById("strikeBtn")
+        .classList.toggle(
+            "active",
+            document.queryCommandState("strikeThrough")
+        );
+}
+
+editor.addEventListener("input",()=>{
+
+    if(isRemoteUpdate) return;
+
+    sendUpdate("typing");
+
+});
+
+document.addEventListener(
+    "selectionchange",
+    updateToolbarState
+);
+
+window.addEventListener("message",(event)=>{
+
+    const data = event.data;
+
+    if(!data || data.type !== "FORMAT_SYNC")
+        return;
+
+    isRemoteUpdate = true;
+
+    editor.innerHTML = data.html;
+
+    showSyncIndicator();
+
+    setTimeout(()=>{
+        isRemoteUpdate = false;
+    },0);
+});
+
+</script>
+
+</body>
+</html>
