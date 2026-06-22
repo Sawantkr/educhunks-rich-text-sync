@@ -1,16 +1,138 @@
-# React + Vite
+# Bidirectional Rich Text Sync Across Iframes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+This repository contains a real-time rich text synchronization system built using React and the browser postMessage API. The application demonstrates seamless communication between isolated iframe contexts, allowing formatting and content updates to be synchronized instantly across multiple editors.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project Overview
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Iframes operate within isolated browsing contexts and cannot directly access each other's DOM. This project solves that limitation by implementing a host-page message broker architecture using the window.postMessage API.
 
-## Expanding the ESLint configuration
+The host page receives editor updates from one iframe and relays them to the other, enabling bidirectional synchronization while preventing infinite message loops.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Key Features
+
+---
+
+### Real-Time Rich Text Synchronization
+
+Formatting changes made in one editor are immediately reflected in the second editor.
+
+### Rich Text Formatting
+
+Supports:
+
+* Bold
+* Italic
+* Strikethrough
+
+### Bidirectional Communication
+
+Both iframe editors can initiate updates independently.
+
+### Host Page Message Broker
+
+The parent application listens for messages and securely relays updates between isolated iframe contexts.
+
+### Infinite Loop Prevention
+
+Remote updates are identified and prevented from being rebroadcast, avoiding recursive synchronization loops.
+
+### Origin Validation
+
+Incoming messages are validated before processing to ensure secure cross-frame communication.
+
+### Toolbar State Synchronization
+
+Toolbar buttons automatically reflect the formatting state at the current cursor position.
+
+### Sync Status Indicator
+
+Visual feedback is displayed whenever synchronization events occur.
+
+### Action Logging
+
+The host page maintains a live log of synchronization events, helping visualize message flow between frames.
+
+## Technology Stack
+
+---
+
+### Frontend
+
+* React
+* JavaScript
+* HTML5
+* CSS3
+
+### Browser APIs
+
+* window.postMessage
+* contentEditable
+* DOM Events
+
+## Getting Started
+
+---
+
+### Prerequisites
+
+* Node.js 18+
+* npm
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone <repository-url>
+```
+
+Navigate to the project directory:
+
+```bash
+cd educhunks-assessment
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## Engineering Highlights
+
+---
+
+* Cross-frame communication architecture
+* Real-time synchronization workflow
+* Event-driven message handling
+* Secure message validation
+* Infinite loop prevention strategy
+* Rich text editor integration
+* Lightweight implementation without external editor libraries
+
+## Future Improvements
+
+---
+
+* Cursor position preservation
+* Shared undo/redo synchronization
+* Multi-user collaborative editing
+* Persistent synchronization history
+
+## Author
+
+---
+
+**Jeevan**
+
+Submitted as part of the EduChunks Engineering Intern Assessment.
