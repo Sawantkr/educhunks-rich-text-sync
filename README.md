@@ -87,7 +87,7 @@ The host page maintains a live log of synchronization events, helping visualize 
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/Sawantkr/educhunks-rich-text-sync>
 ```
 
 Navigate to the project directory:
@@ -129,10 +129,3 @@ npm run dev
 * Multi-user collaborative editing
 * Persistent synchronization history
 
-## Author
-
----
-
-**Jeevan**
-
-Submitted as part of the EduChunks Engineering Intern Assessment.
